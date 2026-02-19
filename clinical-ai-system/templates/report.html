@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Clinical Report – HopeQure</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+body {
+  font-family: 'Segoe UI', system-ui;
+  background: #eef1f6;
+  margin: 0;
+  padding: 25px;
+  color: #1f2937;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: #0b1f44;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.pdf-btn {
+  background: #059669;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.05);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+}
+
+.low { background: #22c55e; }
+.medium { background: #f59e0b; }
+.high { background: #ef4444; }
+
+ul {
+  padding-left: 18px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+.email-box {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 10px;
+  white-space: pre-line;
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.empty {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* -------- RESPONSIVE FIXES -------- */
+
+@media screen and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pdf-btn, .back-btn {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+  }
+
+  .badge {
+    width: 100%;
+    text-align: center;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  ul {
+    font-size: 13px;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+
+  .email-box {
+    font-size: 12px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+  <div>
+    <a class="back-btn" href="/dashboard">⬅ Back to Dashboard</a>
+    <button class="pdf-btn" onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <h2>Clinical Session Report</h2>
+</div>
+
+<div id="reportArea">
+
+<div class="card title-bar">
+
+  <div style="display:flex; gap:16px; align-items:center;">
+    
+    <!-- LOGO -->
+    <img 
+      src="/static/images/logo.png" 
+      alt="HopeQure Logo"
+      style="height:50px; width:auto;"
+    >
+
+    <!-- SESSION INFO -->
+    <div>
+      <h3 style="margin:0;">Session: {{session_number}}</h3>
+      <p style="margin:4px 0 0 0;"><b>Date:</b> {{date}}</p>
+    </div>
+
+  </div>
+
+  <!-- RISK BADGE -->
+  <span class="badge {{report.risk|lower}}">
+    {{report.risk}}
+  </span>
+
+</div>
+
+
+<div class="grid">
+
+<div class="card">
+  <h4>Risk Scores</h4>
+
+  <ul>
+    <li>Anxiety Level: <b>{{report.anxiety}}</b></li>
+    <li>Burnout Risk: <b>{{report.burnout_risk}}</b></li>
+    <li>Depression Risk: <b>{{report.depression_risk}}</b></li>
+    <li>Self-Harm Risk: <b>{{report.self_harm_risk}}</b></li>
+  </ul>
+</div>
+
+
+<div class="card">
+<h4>Follow-up Email Generated</h4>
+
+<div class="email-box">
+{{report.email_text}}
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+  <h4>Clinical Assessment Summary</h4>
+
+  <p>
+    <b>Overall Assessment:</b><br>
+    {{report.clinical_report.overallAssessment}}
+  </p>
+
+  <p><b>Functional Impact:</b></p>
+  <ul>
+    <li><b>Work Functioning:</b> {{report.clinical_report.functionalImpact.work}}</li>
+    <li><b>Social Functioning:</b> {{report.clinical_report.functionalImpact.social}}</li>
+    <li><b>Daily Activities:</b> {{report.clinical_report.functionalImpact.dailyActivities}}</li>
+  </ul>
+
+  <p><b>Follow-Up Plan:</b></p>
+  <ul>
+    <li><b>Timeline:</b> {{report.clinical_report.followUpPlan.timeline}}</li>
+    <li><b>Monitoring:</b></li>
+    <ul>
+      {% for item in report.clinical_report.followUpPlan.monitoring %}
+        <li>{{item}}</li>
+      {% endfor %}
+    </ul>
+  </ul>
+</div>
+
+
+<div class="grid">
+
+<div class="card">
+<h4>Emotional State Indicators</h4>
+
+<ul>
+{% if report.clinical_report.emotionalState %}
+  {% for i in report.clinical_report.emotionalState %}
+  <li>{{i}}</li>
+  {% endfor %}
+{% else %}
+  <p class="empty">No emotional indicators available</p>
+{% endif %}
+</ul>
+
+</div>
+
+<div class="card">
+<h4>Cognitive Patterns Observed</h4>
+
+<ul>
+{% if report.clinical_report.cognitivePatterns %}
+  {% for i in report.clinical_report.cognitivePatterns %}
+  <li>{{i}}</li>
+  {% endfor %}
+{% else %}
+  <p class="empty">No cognitive patterns available</p>
+{% endif %}
+</ul>
+
+</div>
+
+</div>
+
+<div class="card">
+<h4>Clinical Recommendations</h4>
+
+<ul>
+{% if report.clinical_report.recommendations %}
+  {% for i in report.clinical_report.recommendations %}
+  <li>{{i}}</li>
+  {% endfor %}
+{% else %}
+  <p class="empty">
+    No specific recommendations generated for this session.
+  </p>
+{% endif %}
+</ul>
+
+</div>
+
+</div>
+
+<div class="footer">
+Generated by HopeQure Clinical AI System
+</div>
+
+<script>
+
+async function downloadPDF() {
+
+  const { jsPDF } = window.jspdf;
+
+  let element = document.getElementById("reportArea");
+
+  let canvas = await html2canvas(element, {
+    scale: 2
+  });
+
+  let imgData = canvas.toDataURL("image/png");
+
+  let pdf = new jsPDF("p", "mm", "a4");
+
+  let imgWidth = 210;
+  let pageHeight = 297;
+
+  let imgHeight = canvas.height * imgWidth / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while (heightLeft >= 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save("Clinical_Report_Session_{{session_number}}.pdf");
+
+}
+
+</script>
+
+</body>
+</html>
