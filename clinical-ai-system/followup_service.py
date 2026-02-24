@@ -18,8 +18,6 @@ import whisper
 import tempfile
 import os
 
-
-
 app = Flask(__name__, template_folder="templates")
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = "clinical_admin_secret"
@@ -314,11 +312,17 @@ def view_report(session_id):
 
     # 1️⃣ Fetch report data
     cur.execute("""
-        SELECT ai_json, short_summary, created_at
-        FROM clinical_sessions
-        WHERE session_id = ?
-    """, (session_id,))
+    SELECT 
+        c.ai_json,
+        c.short_summary,
+        c.created_at,
+        p.name
+    FROM clinical_sessions c
+    JOIN patients p ON c.patient_id = p.patient_id
+    WHERE c.session_id = ?
+""", (session_id,))
     row = cur.fetchone()
+    patient_name = row["name"]
 
     if not row:
         db.close()
@@ -342,14 +346,13 @@ def view_report(session_id):
 
     # 4️⃣ Render WITHOUT exposing session_id
     return render_template(
-        "report.html",
-        report=report,
-        session_number=session_number,   # ✅ SAFE
-        date=row["created_at"]
-    )
-
+    "report.html",
+    report=report,
+    session_number=session_number,
+    date=row["created_at"],
+    patient_name=patient_name
+)
 # ---------------- REPORT API (JSON) ----------------
-
 @app.route("/api/report/<int:session_id>")
 def api_report(session_id):
 
@@ -462,9 +465,6 @@ def add_patient():
 
 
 # ---------------- REPORT LIST FOR TABLE ----------------
-
-# ---------------- REPORT LIST FOR TABLE & CSV ----------------
-
 @app.route("/report-list")
 def report_list():
 
@@ -575,8 +575,38 @@ def transcribe_audio():
 @socketio.on("connect")
 def handle_connect():
     print("CLIENT CONNECTED SOCKET")
+@app.route("/doctors/new", methods=["GET"])
+def doctor_page():
+    if not session.get("admin"):
+        return redirect("/login")
+    return render_template("add_doctor.html")
 
 
+@app.route("/doctors/new", methods=["POST"])
+def add_doctor():
+
+    if not session.get("admin"):
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json()
+    name = data.get("name")
+    email = data.get("email")
+
+    if not name or not email:
+        return jsonify({"error": "Missing doctor details"}), 400
+
+    db = get_db()
+    cur = db.cursor()
+
+    cur.execute("""
+        INSERT INTO doctors (name, email)
+        VALUES (?, ?)
+    """, (name, email))
+
+    db.commit()
+    db.close()
+
+    return jsonify({"status": "success"})
 
 
 

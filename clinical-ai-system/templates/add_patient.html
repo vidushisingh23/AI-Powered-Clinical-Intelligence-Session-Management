@@ -5,7 +5,22 @@
 <title>HopeQure – Add Patient</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui;
+  background: #eef1f6;
+  color: #1f2937;
+}
 body {
     margin: 0;
     font-family: 'Segoe UI', system-ui;
@@ -15,35 +30,44 @@ body {
 
 /* SIDEBAR SAME AS SESSION */
 .sidebar {
-    width: 90px;
-    position: fixed;
-    height: 100vh;
-    background: linear-gradient(180deg, #0f172a, #1e3a8a);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 30px;
-    gap: 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 100vh;
+  padding: 32px 16px;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  display: flex;
+  flex-direction: column;
 }
-
+.sidebar::before {
+  content: "MENU";
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 18px;
+  padding-left: 8px;
+}
 .sidebar a {
-    color: #cbd5e1;
-    font-size: 18px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.25s;
+  display: block;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
-
 .sidebar a:hover {
-    color: white;
-    transform: scale(1.05);
+  background: rgba(255,255,255,0.08);
+  color: white;
 }
-
 .main {
-    margin-left: 80px;
-    padding: 25px;
+    margin-left: 180px;
+    padding: 28px;
 }
-
 /* TOPBAR SAME */
 .topbar {
     display: flex;
@@ -53,8 +77,6 @@ body {
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0,0,0,.06);
 }
-
-
 .title {
     display: flex;
     align-items: center;
@@ -62,11 +84,9 @@ body {
     font-size: 20px;
     font-weight: 800;
 }
-
 .logo {
     height: 52px;
 }
-
 /* BOX SAME */
 .box {
     margin-top: 22px;
@@ -78,21 +98,18 @@ body {
     width: 100%;
     box-sizing: border-box;
 }
-
 h3 {
     margin-top: 0;
     font-size: 22px;
     font-weight: 800;
     color: #0f172a;
 }
-
 p {
     margin: 14px 0 8px;
     font-size: 14px;
     font-weight: 600;
     color: #334155;
 }
-
 /* INPUTS SAME STYLE */
 input, select {
     width: 100%;
@@ -105,15 +122,11 @@ input, select {
     transition: 0.25s ease;
     box-sizing: border-box;
 }
-
-
 input:focus, select:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 4px rgba(37,99,235,0.18);
 }
-
-
 /* BUTTON SAME STYLE */
 button.primary {
     margin-top: 18px;
@@ -128,21 +141,17 @@ button.primary {
     box-shadow: 0 10px 22px rgba(37,99,235,0.30);
     transition: 0.25s ease;
 }
-
 button.primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 28px rgba(37,99,235,0.35);
 }
-
 #result {
     margin-top: 15px;
     font-weight: bold;
     color: #2563eb;
 }
-
 /* MOBILE SAME */
 @media (max-width: 767px) {
-
   .sidebar {
     position: relative;
     width: 100%;
@@ -181,17 +190,15 @@ button.primary:hover {
     width: 100%;
   }
 }
-
 </style>
 </head>
-
 <body>
-
 <!-- SIDEBAR -->
 <div class="sidebar">
   <a href="/dashboard">Home</a>
   <a href="/add-session">Add</a>
   <a href="/patients/new">Patients</a>
+  <a href="/doctors/new">Doctors</a>
   <a href="/logout">Exit</a>
 </div>
 

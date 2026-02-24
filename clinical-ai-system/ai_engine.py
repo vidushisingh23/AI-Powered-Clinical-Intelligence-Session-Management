@@ -159,8 +159,6 @@ SESSION SUMMARY:
             if "recommendations" not in result["clinical_report"]:
                 result["clinical_report"]["recommendations"] = []
 
-
-
         required = [
             "risk",
             "email_text",
@@ -187,7 +185,8 @@ SESSION SUMMARY:
                 "Subject: HopeQure Session Follow-up\n"
                 "Dear Recipient,\n"
                 "Thank you for the recent clinical session at HopeQure. "
-                "Automated analysis indicates moderate psychological risk based on the session discussion.\n\n"
+                " Based on the session discussion, several important observations were noted that may benefit from continued attention and follow-up. "
+        "We encourage maintaining the strategies discussed and seeking timely support if any concerns continue or intensify.\n\n"
                 "Warm regards,\n"
                 "HopeQure Clinical Team",
             "anxiety": 5,

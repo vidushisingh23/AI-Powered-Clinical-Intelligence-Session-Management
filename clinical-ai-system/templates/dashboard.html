@@ -7,7 +7,24 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* ===== GLOBAL RESET (MUST BE SAME ON ALL PAGES) ===== */
 
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui;
+  background: #eef1f6;
+  color: #1f2937;
+}
 img {
   max-width: 100%;
   height: auto;
@@ -34,36 +51,57 @@ h3, h4 {
     margin: 5px 0;
 }
 
-/* SIDEBAR */
-/* SIDEBAR */
+/* ============================= */
+/* UNIFIED SIDEBAR (USE ON ALL PAGES) */
+/* ============================= */
+
+/* ===== UNIFIED SIDEBAR ===== */
+
 .sidebar {
-    width: 90px;
-    position: fixed;
-    height: 100vh;
-    background: linear-gradient(180deg, #0f172a, #1e3a8a);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 30px;
-    gap: 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 100vh;
+  padding: 32px 16px;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::before {
+  content: "MENU";
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 18px;
+  padding-left: 8px;
 }
 
 .sidebar a {
-    color: #cbd5e1;
-    font-size: 18px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.25s;
+  display: block;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .sidebar a:hover {
-    color: white;
-    transform: scale(1.05);
+  background: rgba(255,255,255,0.08);
+  color: white;
 }
 
+.sidebar a.active {
+  background: rgba(255,255,255,0.15);
+}
 .main {
-    margin-left: 80px;
-    padding: 25px;
+    margin-left: 180px;   /* MUST MATCH SIDEBAR WIDTH */
+    padding: 28px;
 }
 
 /* TOPBAR */
@@ -97,6 +135,8 @@ h3, h4 {
 .searchbox {
     width: 60%;
     display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .searchbox input {
@@ -105,26 +145,60 @@ h3, h4 {
     border-radius: 8px;
     border: 1px solid #d1d5db;
 }
+/* ============================= */
+/* PROFESSIONAL TOPBAR BUTTONS */
+/* ============================= */
 
-.searchbox button {
-    margin-left: 8px;
-    padding: 10px 14px;
-    background: #1f2937;
-    border: none;
-    color: white;
-    border-radius: 8px;
+.search-btn,
+.logout-btn {
+    height: 42px;              /* 👈 fixed equal height */
+    padding: 0 18px;           /* horizontal padding only */
+    display: inline-flex;      
+    align-items: center;       /* perfect vertical centering */
+    justify-content: center;
+    border-radius: 12px;
     font-weight: 600;
+    font-size: 14px;
+}
+.search-btn {
+    background: #1f2937;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
+.search-btn:hover {
+    transform: translateY(-2px);
+    background: #111827;
+}
+
+
 .logout-btn {
-    margin-left: 8px;
-    padding: 10px 14px;
-    background: rgb(219, 75, 75);
-    border: none;
+    background: #ef4444;
     color: white;
-    border-radius: 8px;
     text-decoration: none;
-    font-weight: 600;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 18px rgba(239,68,68,0.25);
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    background: #dc2626;
+}
+.search-btn:active {
+    transform: scale(0.98);
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    background: #dc2626;
+    box-shadow: 0 10px 25px rgba(239,68,68,0.35);
+}
+
+.logout-btn:active {
+    transform: scale(0.98);
 }
 
 /* ANSWER BOX */
@@ -317,9 +391,230 @@ th, td {
 .export-btn:active {
     transform: scale(0.97);
 }
+/* Modal Box */
+.clinical-card strong {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
 
-/* ===================================== */
+/* Footer */
+.clinical-footer {
+    margin-top: 20px;
+    text-align: right;
+}
 
+.clinical-footer button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #1e3a8a;
+    color: white;
+    cursor: pointer;
+}
+/* ===================== */
+/* PROFESSIONAL BELL UI */
+/* ===================== */
+
+.bell-wrapper {
+    position: relative;
+    margin-left: 14px;
+}
+
+.bell-button {
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.bell-button svg {
+    color: #374151;
+}
+
+.bell-button:hover {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.bell-badge {
+    width: 8px;
+    height: 8px;
+    background: #2563eb;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    display: none;
+}
+
+.bell-tooltip {
+    position: absolute;
+    top: 32px;
+    right: -40px;
+    background: #0f172a;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: none;
+    white-space: nowrap;
+}
+
+.bell-panel {
+    position: absolute;
+    top: 48px;
+    right: -10px;
+    width: 380px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    display: none;
+    z-index: 5000;
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+}
+
+/* small arrow pointer */
+.bell-panel::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: 26px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    transform: rotate(45deg);
+    border-left: 1px solid #f1f5f9;
+    border-top: 1px solid #f1f5f9;
+}
+
+.bell-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bell-header span {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.bell-header button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bell-header button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.bell-content {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.bell-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.bell-item:hover {
+    background: #f8fafc;
+}
+
+.bell-item strong {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.bell-item small {
+    color: #6b7280;
+    font-size: 11px;
+}
+.bell-wrapper {
+    margin-left: 6px;
+}
+/* ===== CENTER ALERT MODAL ===== */
+.center-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 6000;
+}
+.center-box {
+    width: 480px;
+    background: white;
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+    animation: fadeInUp 0.3s ease;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.center-header {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header span {
+    color: #dc2626;
+}
+
+.center-close {
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.center-item {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #f8fafc;
+    margin-bottom: 10px;
+    border-left: 4px solid #dc2626;
+    font-size: 13px;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 /* =============================== */
 /* ✅ MOBILE UI POLISH FIXES */
 /* =============================== */
@@ -330,7 +625,7 @@ th, td {
     margin: 0 !important;
   }
 
-  /* ✅ Sidebar becomes TOP NAVBAR */
+  /* Sidebar becomes TOP NAVBAR */
   .sidebar {
     position: relative !important;
     width: 100% !important;
@@ -346,13 +641,13 @@ th, td {
     padding: 6px 12px !important;
   }
 
-  /* ✅ Main takes full width */
+  /*  Main takes full width */
   .main {
     margin-left: 0 !important;
     padding: 12px !important;
   }
 
-  /* ✅ Topbar stacks properly */
+  /* Topbar stacks properly */
   .topbar {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -368,7 +663,7 @@ th, td {
     text-align: center !important;
   }
 
-  /* ✅ Search full width */
+  /* Search full width */
   .searchbox {
     width: 100% !important;
     flex-direction: column !important;
@@ -382,23 +677,23 @@ th, td {
     margin: 0 !important;
   }
 
-  /* ✅ Charts become vertical */
+  /* Charts become vertical */
   .grid {
     grid-template-columns: 1fr !important;
   }
 
-  /* ✅ KPI 2 per row */
+  /* KPI 2 per row */
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* ✅ Filters wrap (NOT giant vertical) */
+  /* Filters wrap (NOT giant vertical) */
   .filter-group {
     flex-wrap: wrap !important;
     gap: 6px !important;
   }
 
-  /* ✅ Hide Date column */
+  /* Hide Date column */
   table th:nth-child(2),
   table td:nth-child(2) {
     display: none !important;
@@ -415,23 +710,61 @@ th, td {
   <a href="/dashboard">Home</a>
   <a href="/add-session">Add</a>
   <a href="/patients/new">Patients</a>
+  <a href="/doctors/new">Doctors</a>
   <a href="/logout">Exit</a>
 </div>
 
 <div class="main">
 
 <div class="topbar">
+
   <div class="brand">
       <img src="/static/images/logo.png">
       <div class="title">Clinical Session Analytics</div>
   </div>
 
   <div class="searchbox">
-    <input id="query" placeholder="Search about patients,sessions,risks...">
-    <button onclick="search()">Search</button>
-    <a href="/logout" class="logout-btn">Logout</a>
+
+      <input id="query" placeholder="Search about patients,sessions,risks...">
+      <button class="search-btn" onclick="search()">Search</button>
+      <a href="/logout" class="logout-btn">Logout</a>
+
+      <div class="bell-wrapper">
+
+          <div class="bell-button"
+               onclick="toggleBellPanel()"
+               onmouseenter="showTooltip()"
+               onmouseleave="hideTooltip()">
+
+              <svg width="20" height="20" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
+                  <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 01-3.46 0"/>
+              </svg>
+
+              <span id="alertCount" class="bell-badge"></span>
+
+              <div id="bellTooltip" class="bell-tooltip">
+                  Notifications
+              </div>
+          </div>
+
+          <div id="bellPanel" class="bell-panel">
+              <div class="bell-header">
+                  <span>Notifications</span>
+                  <button onclick="markAllRead()">Mark all as read</button>
+              </div>
+              <div id="bellContent" class="bell-content"></div>
+          </div>
+
+      </div>
+
   </div>
+
 </div>
+
 
 <div class="answer-box">
   <h4>AI Assistant Response</h4>
@@ -692,9 +1025,145 @@ function exportCSV(){
 }
 
 loadDashboard();
+function toggleAlertPanel() {
+    const panel = document.getElementById("alertPanel");
+    panel.style.display =
+        panel.style.display === "block" ? "none" : "block";
+}
 
+function closeCritical() {
+    document.getElementById("criticalPopup").style.display = "none";
+}
+function loadNotifications() {
+
+    fetch("/report-list")
+    .then(res => res.json())
+    .then(data => {
+
+        const patients = {};
+        const now = new Date();
+
+        data.forEach(session => {
+
+            const name = session.patient_name || "Primary Patient";
+            const riskValue = (session.risk || "").toString().trim().toUpperCase();
+
+            if (!patients[name]) {
+                patients[name] = {
+                    highCount: 0,
+                    latestDate: session.date
+                };
+            }
+
+            // FIX: safer risk matching
+            if (riskValue.includes("HIGH")) {
+                patients[name].highCount++;
+            }
+
+            if (new Date(session.date) > new Date(patients[name].latestDate)) {
+                patients[name].latestDate = session.date;
+            }
+        });
+
+        let alerts = [];
+
+        Object.keys(patients).forEach(name => {
+
+            const patient = patients[name];
+            const lastDate = new Date(patient.latestDate);
+            const diffDays =
+                Math.floor((now - lastDate) / (1000*60*60*24));
+
+            const formattedDate =
+                lastDate.toLocaleDateString("en-GB");
+
+            // High risk first
+            if (patient.highCount > 0) {
+                alerts.push(`
+                    <div class="bell-item">
+                        <strong>${name}</strong>
+                        ${patient.highCount} High Risk session(s)<br>
+                        <small>Last session: ${formattedDate}</small>
+                    </div>
+                `);
+            }
+
+            // Overdue independently checked
+            if (diffDays > 7) {
+                alerts.push(`
+                    <div class="bell-item">
+                        <strong>${name}</strong>
+                        Follow-up overdue<br>
+                        <small>${diffDays} days inactive</small>
+                    </div>
+                `);
+            }
+
+        });
+
+        // Render
+        document.getElementById("bellContent").innerHTML = alerts.join("");
+
+        if (alerts.length > 0) {
+
+            document.getElementById("alertCount").innerText = "";
+            document.getElementById("alertCount").style.display = "inline-block";
+
+            document.getElementById("bellTooltip").innerText =
+                alerts.length + " new notifications";
+
+            // AUTO OPEN
+            const panel = document.getElementById("bellPanel");
+            panel.style.display = "block";
+
+            // Auto close after 6 sec
+            setTimeout(() => {
+                panel.style.display = "none";
+            }, 6000);
+        }
+
+    })
+    .catch(err => console.error(err));
+}
+function toggleBellPanel() {
+    const panel = document.getElementById("bellPanel");
+    panel.style.display =
+        panel.style.display === "block" ? "none" : "block";
+}
+
+function showTooltip() {
+    document.getElementById("bellTooltip").style.display = "block";
+}
+
+function hideTooltip() {
+    document.getElementById("bellTooltip").style.display = "none";
+}
+
+function markAllRead() {
+    document.getElementById("alertCount").style.display = "none";
+}
+
+window.addEventListener("load", function() {
+    loadDashboard();
+    loadNotifications();
+});
+// ✅ Close notification panel when clicking outside
+document.addEventListener("click", function(event) {
+
+    const panel = document.getElementById("bellPanel");
+    const bellButton = document.querySelector(".bell-button");
+    const bellWrapper = document.querySelector(".bell-wrapper");
+
+    if (!panel) return;
+
+    // If click is outside bell wrapper → close panel
+    if (!bellWrapper.contains(event.target)) {
+        panel.style.display = "none";
+    }
+
+});
 </script>
 
-
+</div>
 </body>
 </html>

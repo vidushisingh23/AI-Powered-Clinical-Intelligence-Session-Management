@@ -6,7 +6,24 @@
 <title>HopeQure – Add Clinical Session</title>
 
 <style>
+/* ===== GLOBAL RESET (MUST BE SAME ON ALL PAGES) ===== */
 
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui;
+  background: #eef1f6;
+  color: #1f2937;
+}
 /* GLOBAL */
 body {
     margin: 0;
@@ -14,36 +31,52 @@ body {
     background: #f1f5f9;
     color: #1f2937;
 }
+/* ===== UNIFIED SIDEBAR ===== */
 
-/* SIDEBAR */
 .sidebar {
-    width: 90px;
-    position: fixed;
-    height: 100vh;
-    background: linear-gradient(180deg, #0f172a, #1e3a8a);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 30px;
-    gap: 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 100vh;
+  padding: 32px 16px;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::before {
+  content: "MENU";
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 18px;
+  padding-left: 8px;
 }
 
 .sidebar a {
-    color: #cbd5e1;
-    font-size: 18px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.25s;
+  display: block;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .sidebar a:hover {
-    color: white;
-    transform: scale(1.05);
+  background: rgba(255,255,255,0.08);
+  color: white;
 }
 
-/* MAIN */
+.sidebar a.active {
+  background: rgba(255,255,255,0.15);
+}
 .main {
-    margin-left: 80px;
+    margin-left: 180px;   /* MUST MATCH SIDEBAR WIDTH */
     padding: 28px;
 }
 
@@ -77,7 +110,7 @@ body {
     padding: 32px;
     border-radius: 18px;
     box-shadow: 0 10px 28px rgba(0,0,0,.08);
-    max-width: 980px;
+    
     width: 100%;
     box-sizing: border-box;
 }
@@ -413,6 +446,7 @@ button.primary:hover {
   <a href="/dashboard">Home</a>
   <a href="/add-session">Add</a>
   <a href="/patients/new">Patients</a>
+  <a href="/doctors/new">Doctors</a>
   <a href="/logout">Exit</a>
 </div>
 
@@ -546,6 +580,8 @@ let recognition;
 let mediaRecorder;
 let audioChunks = [];
 let recording = false;
+let silenceTimer = null;
+const SILENCE_LIMIT = 5000; // 5 seconds
 
 function toggleRecording() {
 
@@ -600,6 +636,15 @@ function toggleRecording() {
             document.getElementById("summary").value =
               finalTranscript + interimTranscript;
           };
+            // 🔥 RESET SILENCE TIMER ON SPEECH
+clearTimeout(silenceTimer);
+
+silenceTimer = setTimeout(() => {
+    if (recording) {
+        console.log("Auto-stopping due to silence");
+        toggleRecording();  // trigger normal stop logic
+    }
+}, SILENCE_LIMIT);
 
           recognition.onerror = function(e) {
             console.log("Speech error:", e.error);
@@ -623,7 +668,7 @@ function toggleRecording() {
       });
 
   } else {
-
+    clearTimeout(silenceTimer);
     if (recognition) {
       recognition.stop();
     }
@@ -633,7 +678,7 @@ function toggleRecording() {
     }
 
     micBtn.classList.remove("recording");
-    status.innerText = "Processing with Whisper...";
+    status.innerText = "Processing audio...";
 
     mediaRecorder.onstop = () => {
 
@@ -656,7 +701,7 @@ function toggleRecording() {
           document.getElementById("summary").value = data.text;
           status.innerText = "Whisper transcription complete.";
         } else {
-          status.innerText = "Transcription failed.";
+          status.innerText = "No audio detected.";
         }
 
         setTimeout(() => {
@@ -670,7 +715,7 @@ function toggleRecording() {
   }
 }
 /* ===============================
-   🎥 VIDEO RECORDING + WHISPER
+   VIDEO RECORDING + WHISPER
 ================================ */
 
 let videoRecorder;
@@ -711,6 +756,40 @@ timerInterval = setInterval(updateTimer, 1000);
 
       videoStream = stream;
       video.srcObject = stream;
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let finalTranscript = "";
+
+    recognition.onresult = function(event) {
+
+        let interimTranscript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            let transcript = event.results[i][0].transcript;
+
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + " ";
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+
+        document.getElementById("summary").value =
+            finalTranscript + interimTranscript;
+    };
+
+    recognition.start();
+}
+
       document.querySelector(".video-container").classList.add("active");
 document.getElementById("recordIndicator").style.display = "block";
 
@@ -738,6 +817,10 @@ document.getElementById("recordIndicator").style.display = "block";
     });
 
   } else {
+    if (recognition) {
+    recognition.stop();
+}
+
 
     videoRecorder.stop();
 
