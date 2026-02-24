@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HopeQure – Add Clinical Session</title>
+
+<style>
+/* ===== GLOBAL RESET (MUST BE SAME ON ALL PAGES) ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui;
+  background: #eef1f6;
+  color: #1f2937;
+}
+/* GLOBAL */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui;
+    background: #f1f5f9;
+    color: #1f2937;
+}
+/* ===== UNIFIED SIDEBAR ===== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 100vh;
+  padding: 32px 16px;
+  background: linear-gradient(180deg, #0f172a, #1e3a8a);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::before {
+  content: "MENU";
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 18px;
+  padding-left: 8px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.sidebar a:hover {
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.sidebar a.active {
+  background: rgba(255,255,255,0.15);
+}
+.main {
+    margin-left: 180px;   /* MUST MATCH SIDEBAR WIDTH */
+    padding: 28px;
+}
+
+/* TOPBAR */
+.topbar {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 16px 22px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.logo {
+    height: 52px;
+}
+
+/* MAIN BOX */
+.box {
+    margin-top: 22px;
+    background: white;
+    padding: 32px;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+    
+    width: 100%;
+    box-sizing: border-box;
+}
+
+h3 {
+    margin-top: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+p {
+    margin: 14px 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* DROPDOWN */
+select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    margin-bottom: 18px;
+    transition: 0.25s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.18);
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 180px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    transition: 0.25s ease;
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.18);
+}
+
+/* BUTTON */
+button.primary {
+    margin-top: 18px;
+    padding: 14px 22px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow: 0 10px 22px rgba(37,99,235,0.30);
+    transition: 0.25s ease;
+}
+.voice-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+button.speech {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    transition: 0.25s ease;
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+button.speech:hover {
+    background: #e2e8f0;
+}
+
+button.speech.primary-voice {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 18px rgba(37,99,235,0.25);
+}
+
+button.speech.primary-voice:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(37,99,235,0.30);
+}
+
+.voice-status {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    display: none;
+}
+
+button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(37,99,235,0.35);
+}
+/* RESULT MESSAGE */
+#result {
+    margin-top: 16px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #2563eb;
+}
+/* ✅ VOICE NOTE RECORDER CARD */
+.voice-card {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.voice-mic-btn {
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 20px rgba(37,99,235,0.25);
+    transition: 0.25s ease;
+}
+
+.voice-mic-btn:hover {
+    transform: scale(1.05);
+}
+
+.voice-mic-btn.recording {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.35); }
+    70% { box-shadow: 0 0 0 18px rgba(220,38,38,0); }
+    100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+
+.voice-info {
+    flex: 1;
+}
+
+.voice-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.voice-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.voice-status {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    display: none;
+}
+/* ===============================
+   PROFESSIONAL VIDEO UI
+================================ */
+.video-module {
+    margin-top: 28px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Button centered */
+.video-btn {
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    box-shadow: 0 12px 28px rgba(37,99,235,0.35);
+    transition: 0.25s ease;
+    min-width: 220px;
+}
+
+.video-btn:hover {
+    transform: translateY(-2px);
+}
+
+.video-btn.recording {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: 0 12px 28px rgba(220,38,38,0.35);
+}
+
+/* Video container */
+.video-container {
+    position: relative;
+    width: 480px;
+    height: 280px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #0f172a;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    border: 3px solid #e2e8f0;
+    display: none;
+}
+
+.video-container.active {
+    display: block;
+}
+.video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Recording indicator */
+.record-indicator {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #dc2626;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: none;
+}
+
+/* Timer */
+.record-timer {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: none;
+}
+
+
+
+
+@keyframes pulseRec {
+    0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.6); }
+    70% { box-shadow: 0 0 0 12px rgba(220,38,38,0); }
+    100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+
+  .sidebar {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    padding: 14px 0 !important;
+  }
+
+  .main {
+    margin-left: 0 !important;
+    padding: 14px !important;
+  }
+
+  .topbar {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .title {
+    font-size: 17px !important;
+  }
+
+  .box {
+    padding: 20px !important;
+  }
+
+  button.primary {
+    width: 100% !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a href="/dashboard">Home</a>
+  <a href="/add-session">Add</a>
+  <a href="/patients/new">Patients</a>
+  <a href="/doctors/new">Doctors</a>
+  <a href="/logout">Exit</a>
+</div>
+
+<div class="main">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="title">
+    <img src="/static/images/logo.png" class="logo">
+    Add Clinical Session
+  </div>
+</div>
+
+<!-- FORM BOX -->
+<div class="box">
+
+<h3>New Session Entry</h3>
+
+<p><b>Select Patient Record:</b></p>
+
+<select id="patient_id" required>
+  <option value="" disabled selected>-- Select Patient --</option>
+
+  {% for p in patients %}
+    <option value="{{p.patient_id}}">
+      {{p.name}} — {{p.email}}
+    </option>
+  {% endfor %}
+</select>
+
+<p>Enter or record clinical session summary:</p>
+
+<!-- 🎤 SPEECH CONTROLS ABOVE TEXTAREA -->
+<!-- ⚡ LIVE DICTATION (BETA) -->
+<!--
+<p style="font-size:13px; font-weight:700; color:#64748b;">
+Quick Speech (Beta)
+</p>
+
+<button class="speech" type="button" onclick="startSpeech()">
+🎤 Start Speaking
+</button>
+
+<button class="speech" type="button" onclick="stopSpeech()">
+⏹ Stop
+</button>
+
+<p id="micStatus"
+   style="margin-top:8px; font-size:13px; font-weight:700;
+   color:#dc2626; display:none;">
+🔴 Listening...
+</p>
+<hr style="margin:14px 0; border:0.5px solid #e2e8f0;">
+--->
+
+<!-- ✅ Clinical Voice Note Input -->
+<div class="voice-card">
+
+  <!-- Mic Button -->
+  <button id="micBtn" class="voice-mic-btn" onclick="toggleRecording()">
+    🎙
+  </button>
+
+  <!-- Info -->
+  <div class="voice-info">
+    <div class="voice-title">Record audio</div>
+    <div class="voice-sub">Tap mic to speak</div>
+
+    <p id="voiceStatus" class="voice-status"></p>
+  </div>
+
+</div>
+<!--  Video Recorder -->
+<!--  PROFESSIONAL VIDEO MODULE -->
+<!-- 🎥 VIDEO MODULE -->
+<!-- 🎥 VIDEO MODULE -->
+<div class="video-module">
+
+  <button class="video-btn" id="videoBtn"
+          onclick="toggleVideoRecording()">
+    ● Record video
+  </button>
+
+  <div class="video-container" id="videoContainer">
+
+    <video id="videoPreview"
+           autoplay
+           muted
+           playsinline>
+    </video>
+
+    <div class="record-indicator" id="recordIndicator">
+      ● Recording
+    </div>
+
+    <div class="record-timer" id="recordTimer">
+      00:00
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<p id="whisperStatus"
+   style="margin-top:8px; font-size:13px; font-weight:700;
+   color:#16a34a; display:none;">
+</p>
+
+
+<textarea id="summary" rows="12"
+placeholder="Write detailed clinical session notes here..."></textarea>
+
+
+<button class="primary" onclick="submitSession()">
+Save Session & Send followup email
+</button>
+
+<p id="result"></p>
+
+</div>
+
+</div>
+
+<script>
+
+/* ===== REAL TIME STREAMING WHISPER ===== */
+
+let recognition;
+let mediaRecorder;
+let audioChunks = [];
+let recording = false;
+let silenceTimer = null;
+const SILENCE_LIMIT = 5000; // 5 seconds
+
+function toggleRecording() {
+
+  const micBtn = document.getElementById("micBtn");
+  const status = document.getElementById("voiceStatus");
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!recording) {
+
+    audioChunks = [];
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+
+        // 🎤 START WHISPER RECORDING (ALWAYS WORKS)
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = e => {
+          if (e.data.size > 0) {
+            audioChunks.push(e.data);
+          }
+        };
+
+        mediaRecorder.start();
+
+        // 🎙 START REAL-TIME TYPING (ONLY IF SUPPORTED)
+        if (SpeechRecognition) {
+
+          recognition = new SpeechRecognition();
+          recognition.lang = "en-IN";
+          recognition.continuous = true;
+          recognition.interimResults = true;
+
+          let finalTranscript = "";
+
+          recognition.onresult = function(event) {
+
+            let interimTranscript = "";
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              let transcript = event.results[i][0].transcript;
+
+              if (event.results[i].isFinal) {
+                finalTranscript += transcript + " ";
+              } else {
+                interimTranscript += transcript;
+              }
+            }
+
+            document.getElementById("summary").value =
+              finalTranscript + interimTranscript;
+          };
+            // 🔥 RESET SILENCE TIMER ON SPEECH
+clearTimeout(silenceTimer);
+
+silenceTimer = setTimeout(() => {
+    if (recording) {
+        console.log("Auto-stopping due to silence");
+        toggleRecording();  // trigger normal stop logic
+    }
+}, SILENCE_LIMIT);
+
+          recognition.onerror = function(e) {
+            console.log("Speech error:", e.error);
+          };
+
+          recognition.start();
+
+        } else {
+          console.log("SpeechRecognition not supported. Whisper only mode.");
+        }
+
+        micBtn.classList.add("recording");
+        status.style.display = "block";
+        status.innerText = "Listening...";
+        recording = true;
+
+      })
+      .catch(err => {
+        console.log("Mic error:", err);
+        alert("Microphone permission required.");
+      });
+
+  } else {
+    clearTimeout(silenceTimer);
+    if (recognition) {
+      recognition.stop();
+    }
+
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    }
+
+    micBtn.classList.remove("recording");
+    status.innerText = "Processing audio...";
+
+    mediaRecorder.onstop = () => {
+
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+
+      const formData = new FormData();
+      formData.append("audio", audioBlob);
+
+      fetch("/transcribe-audio", {
+        method: "POST",
+        headers: {
+          "x-api-key": "hopequre_test_token_2026"
+        },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+
+        if (data.text) {
+          document.getElementById("summary").value = data.text;
+          status.innerText = "Whisper transcription complete.";
+        } else {
+          status.innerText = "No audio detected.";
+        }
+
+        setTimeout(() => {
+          status.style.display = "none";
+        }, 2000);
+      });
+
+    };
+
+    recording = false;
+  }
+}
+/* ===============================
+   VIDEO RECORDING + WHISPER
+================================ */
+
+let videoRecorder;
+let videoStream;
+let videoChunks = [];
+let recordingVideo = false;
+let timerInterval;
+let secondsElapsed = 0;
+
+function toggleVideoRecording() {
+
+  const video = document.getElementById("videoPreview");
+  const status = document.getElementById("voiceStatus");
+
+  if (!recordingVideo) {
+
+    navigator.mediaDevices.getUserMedia({
+  video: {
+    width: { ideal: 640 },
+    height: { ideal: 480 }
+  },
+  audio: true
+})
+
+    .then(stream => {
+    document.getElementById("videoContainer").classList.add("active");
+document.getElementById("recordIndicator").style.display = "block";
+document.getElementById("recordTimer").style.display = "block";
+
+const btn = document.getElementById("videoBtn");
+btn.classList.add("recording");
+btn.innerHTML = "⏹ Stop Recording";
+
+secondsElapsed = 0;
+document.getElementById("recordTimer").innerText = "00:00";
+timerInterval = setInterval(updateTimer, 1000);
+
+
+      videoStream = stream;
+      video.srcObject = stream;
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let finalTranscript = "";
+
+    recognition.onresult = function(event) {
+
+        let interimTranscript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            let transcript = event.results[i][0].transcript;
+
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + " ";
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+
+        document.getElementById("summary").value =
+            finalTranscript + interimTranscript;
+    };
+
+    recognition.start();
+}
+
+      document.querySelector(".video-container").classList.add("active");
+document.getElementById("recordIndicator").style.display = "block";
+
+
+      videoChunks = [];
+
+      videoRecorder = new MediaRecorder(stream);
+
+      videoRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          videoChunks.push(e.data);
+        }
+      };
+
+      videoRecorder.start();
+
+      status.style.display = "block";
+      status.innerText = "Recording video...";
+      recordingVideo = true;
+
+    })
+    .catch(err => {
+      console.log("Camera/Mic error:", err);
+      alert("Camera & Microphone permission required.");
+    });
+
+  } else {
+    if (recognition) {
+    recognition.stop();
+}
+
+
+    videoRecorder.stop();
+
+    videoRecorder.onstop = () => {
+
+      const videoBlob = new Blob(videoChunks, { type: "video/webm" });
+
+      const formData = new FormData();
+      formData.append("audio", videoBlob);  // send video to whisper
+
+      status.innerText = "Processing video with Whisper...";
+      clearInterval(timerInterval);
+
+document.getElementById("recordIndicator").style.display = "none";
+document.getElementById("recordTimer").style.display = "none";
+
+const btn = document.getElementById("videoBtn");
+btn.classList.remove("recording");
+btn.innerHTML = "● Record video";
+document.getElementById("recordTimer").innerText = "00:00";
+
+
+document.getElementById("videoContainer").classList.remove("active");
+
+
+      fetch("/transcribe-audio", {
+        method: "POST",
+        headers: {
+          "x-api-key": "hopequre_test_token_2026"
+        },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+
+        if (data.text && data.text.trim() !== "") {
+          document.getElementById("summary").value = data.text;
+          status.innerText = "Video transcription complete.";
+        } else {
+          status.innerText = "No speech detected.";
+        }
+
+        setTimeout(() => {
+          status.style.display = "none";
+        }, 2000);
+
+      });
+
+    };
+
+    videoStream.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+document.querySelector(".video-container").classList.remove("active");
+document.getElementById("recordIndicator").style.display = "none";
+
+
+    recordingVideo = false;
+  }
+}
+
+/*
+  OLD SAVE LOGIC UNCHANGED
+ */
+
+function submitSession(){
+
+  let text = document.getElementById("summary").value;
+  let patient = document.getElementById("patient_id").value;
+
+  if(patient === ""){
+    alert("Please select a patient first");
+    return;
+  }
+
+  if(text.trim() == ""){
+    alert("Please enter session summary first");
+    return;
+  }
+
+  document.getElementById("result").innerText =
+    "Processing session analysis...";
+
+  fetch("/analyze-session",{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "x-api-key":"hopequre_test_token_2026"
+  },
+  body: JSON.stringify({
+    summary: text,
+    patient_id: patient
+  })
+})
+
+  .then(r => r.json())
+  .then(d => {
+      document.getElementById("result").innerText =
+      "Session saved successfully! Email sent to: " + d.recipient +
+      " | Risk Level: " + d.risk;
+  })
+  .catch(() => {
+      document.getElementById("result").innerText =
+      "Error processing session. Please try again.";
+  });
+
+}
+function updateTimer() {
+  secondsElapsed++;
+
+  const mins = Math.floor(secondsElapsed / 60);
+  const secs = secondsElapsed % 60;
+
+  const formatted =
+    String(mins).padStart(2, '0') + ":" +
+    String(secs).padStart(2, '0');
+
+  document.getElementById("recordTimer").innerText = formatted;
+}
+
+
+
+</script>
+
+</body>
+</html>
